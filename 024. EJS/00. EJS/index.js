@@ -8,7 +8,7 @@ const app = express()
 const port = 3000;
 
 function isWeekDay(dayNum) {
-    if (dayNum < 6) {
+    if (dayNum !== 6 || dayNum !== 0) {
         return true
     } else {
         return false
