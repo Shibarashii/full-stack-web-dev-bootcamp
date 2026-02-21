@@ -1,0 +1,26 @@
+<%- include('./partials/header.ejs')%>
+    <main>
+        <% if (locals.posts) { %>
+
+            <ul>
+                <% for (post of posts) { %>
+
+                    <li>
+                        <a href="blog/<%= post.id %>">
+                            <%=post.title %>
+                        </a>
+                        <!-- <p>
+                        <%= post.author %>
+                    </p>
+                    <p>
+                        <%= post.description %>
+                    </p> -->
+
+                    </li>
+                    <% } %>
+            </ul>
+            <% } %>
+
+
+    </main>
+    <%- include('./partials/footer.ejs')%>
