@@ -26,6 +26,7 @@ app.get('/', async (req, res) => {
 
 app.post('/', async (req, res) => {
   // Step 2: Play around with the drop downs and see what gets logged.
+  console.log(req.body);
   const type = req.body.type;
   const participants = req.body.participants;
   let url = `https://bored-api.appbrewery.com/filter?type=${type}&participants=${participants}`;
@@ -36,11 +37,11 @@ app.post('/', async (req, res) => {
     const response = await axios.get(url);
     const random = Math.floor(Math.random() * response.data.length);
     data = response.data[random];
-    res.render('index.ejs', { data: data });
+    res.status(202).render('index.ejs', { data: data });
   } catch (error) {
     const message = 'No activities that match your criteria';
     console.error(error.message);
-    res.render('index.ejs', { error: message });
+    res.status(404).render('index.ejs', { error: message });
   }
 });
 
