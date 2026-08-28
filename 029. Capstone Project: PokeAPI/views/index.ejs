@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Pokemon API </title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <main class="flex flex-col bg-green-50 h-screen justify-center">
+        <!-- Left -->
+        <div class="poke-container">
+            <h1> Your Pokemon is: </h1>
+            <form action="/random-pokemon" method="POST">
+                <button type="submit" class="border-2 border-blue-600 bg-blue-200 p-5 rounded-2xl hover:bg-blue-500">
+                    Get a random Pokemon
+                </button>
+            </form>
+
+            <% if (locals.pokemon) { %>
+                <div class="mt-40 flex flex-col items-center">
+
+                    <!-- Sprite -->
+                    <img src="<%= pokemon.sprite %>" alt="Pokemon Image" class="w-48" id="pokemon-sprite">
+
+                    <!-- Name -->
+                    <h1>
+                        <%= pokemon.name.toUpperCase() %>
+                    </h1>
+
+                    <!-- Ability -->
+                    <p>
+                        Ability: <span class="font-semibold">
+                            <%= pokemon.ability.toUpperCase() %>
+                        </span>
+                    </p>
+
+                    <!-- Cry  -->
+
+                    <audio src="<%= pokemon.cry %>" id="pokemon-cry"></audio>
+                    <button type="button" id="play-cry"
+                        class="border-2 border-blue-600 bg-blue-200 p-5 rounded-2xl hover:bg-blue-500">
+                        Play Pokemon cry
+                    </button>
+                    <% } %>
+                </div>
+        </div>
+
+    </main>
+    <footer>
+
+    </footer>
+    <script>
+        const playCryButton = document.getElementById('play-cry')
+        const cryAudio = document.getElementById('pokemon-cry')
+
+        cryAudio.volume = 0.2
+
+        playCryButton.addEventListener('click', () => {
+            cryAudio.play()
+        })
+
+    </script>
+</body>
+
+</html>
