@@ -70,7 +70,7 @@ app.post('/posts', (req, res) => {
 app.patch('/posts/:id', (req, res) => {
   const postIndex = posts.findIndex((p) => p.id == req.params.id);
 
-  if (postIndex == 1) return res.sendStatus(404);
+  if (postIndex == -1) return res.sendStatus(404);
 
   posts[postIndex] = {
     ...posts[postIndex],
