@@ -1,5 +1,30 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import pg from 'pg';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '../../.env' });
+
+const db = new pg.Client({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+});
+
+db.connect();
+
+let quiz;
+
+db.query('SELECT * FROM flags', (err, res) => {
+  if (err) {
+    console.log('Error: ', err.stack);
+  } else {
+    quiz = res.rows;
+  }
+  db.end();
+});
 
 const app = express();
 const port = 3000;
@@ -16,7 +41,6 @@ let currentQuestion = {};
 app.get('/', (req, res) => {
   totalCorrect = 0;
   nextQuestion();
-  console.log(currentQuestion);
   res.render('index.ejs', { question: currentQuestion });
 });
 
@@ -24,7 +48,7 @@ app.get('/', (req, res) => {
 app.post('/submit', (req, res) => {
   let answer = req.body.answer.trim();
   let isCorrect = false;
-  if (currentQuestion.capital.toLowerCase() === answer.toLowerCase()) {
+  if (currentQuestion.name.toLowerCase() === answer.toLowerCase()) {
     totalCorrect++;
     console.log(totalCorrect);
     isCorrect = true;
@@ -41,6 +65,7 @@ app.post('/submit', (req, res) => {
 function nextQuestion() {
   const randomCountry = quiz[Math.floor(Math.random() * quiz.length)];
   currentQuestion = randomCountry;
+  console.log(currentQuestion);
 }
 
 app.listen(port, () => {
