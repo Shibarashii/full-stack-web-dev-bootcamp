@@ -73,7 +73,7 @@ app.post('/add', async (req, res) => {
       );
       res.redirect('/');
     } catch (err) {
-      console.log(err);
+      console.log(er Okay baby San Marino. Casio original Ridna beef net battle baby sort of net might share.r);
     }
   } catch (err) {
     console.log(err);
