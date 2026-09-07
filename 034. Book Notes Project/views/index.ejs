@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/styles/output.css">
+</head>
+
+<body>
+    <%- include('partials/header') %>
+        <main>
+            <div class="flex flex-col">
+                <p class="lead w-full"> This is a collection and rating of my read books.</p>
+                <div class="flex items-center my-2 *:mr-5">
+                    <a class="primary-button" type="submit" href="/add"> Add Book </a>
+                    <form action="/filter" method="get">
+                        <label for="sort" class="lead"> Sort by: </label>
+                        <select name="sort" class="secondary-button rounded-none">
+                            <option value="rating" class="bg-amber-100">Rating</option>
+                            <option value="title" class="bg-amber-100">Title</option>
+                            <option value="date_read" class="bg-amber-100">Date read</option>
+                        </select>
+                        <button type="submit" class="primary-button">Apply</button>
+                    </form>
+                </div>
+            </div>
+            <% if (locals.books.length> 0) { %>
+                <% for (const book of books) {%>
+                    <a id="<%= book.id %>" class="book-article" href="/books/<%= book.id %>">
+                        <div class="book-col">
+                            <img src="https://covers.openlibrary.org/b/isbn/<%= book.isbn %>-M.jpg"
+                                alt="<%= book.title %> Photo" class="book-img">
+                        </div>
+                        <div class="book-col">
+                            <p class="title">
+                                <%= book.title %>
+                            </p>
+                            <p class="lead">
+                                <%= book.author %>
+                            </p>
+                            <p class="lead">
+                                <span>
+                                    <% for (let star=1; star <=10; star++) { %>
+                                        <span
+                                            class="<%= star <= book.rating ? 'text-green-500' : 'text-gray-300' %>">★</span>
+                                        <% } %>
+                                            <span>
+                                                <%= book.rating %> / 10
+                                            </span>
+                                </span>
+                            </p>
+
+                            <p>
+                                <%= book.review %>
+                            </p>
+                            <p class="text-sm font-medium">
+                                Read:
+                                <% const readDate=new Date(`${book.date_read}T00:00:00Z`); const formattedDate=new
+                                    Intl.DateTimeFormat('en-US', { month: 'long' , day: 'numeric' , year: 'numeric' ,
+                                    timeZone: 'UTC' }).format(readDate); %>
+
+                                    <time datetime="<%= readDate.toISOString() %>">
+                                        <%= formattedDate %>
+                                    </time>
+                            </p>
+                        </div>
+                    </a>
+                    <% } %>
+                        <% } else { %>
+                            <div class="flex justify-center items-center p-10">
+
+                                <p class="lead text-gray-400"> No books to display</p>
+                            </div>
+                            <% }%>
+
+        </main>
+        <%- include('partials/footer') %>
+
+</body>
+
+</html>

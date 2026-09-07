@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= book.title %> | My Reads
+    </title>
+    <link rel="stylesheet" href="/styles/output.css">
+</head>
+
+<body>
+    <%- include('partials/header') %>
+        <main class="p-5">
+            <a href="/" class="secondary-button">Back to My Reads</a>
+            <form action="/books/<%= book.id %>/update" method="post" class="book-detail-card"
+                data-book-id="<%= book.id %>">
+                <div class="book-col">
+                    <img src="https://covers.openlibrary.org/b/isbn/<%= book.isbn %>-M.jpg"
+                        alt="<%= book.title %> Photo" class="book-img">
+                </div>
+
+                <div class="book-detail-content">
+                    <div class="detail-row" data-field="title">
+                        <label for="title">Title</label>
+                        <span class="detail-value">
+                            <%= book.title %>
+                        </span>
+                        <input id="title" name="title" value="<%= book.title %>" hidden>
+                        <button type="button" class="icon-button edit-button" aria-label="Edit title"
+                            title="Edit title">&#9998;</button>
+                    </div>
+
+                    <div class="detail-row" data-field="author">
+                        <label for="author">Author</label>
+                        <span class="detail-value">
+                            <%= book.author %>
+                        </span>
+                        <input id="author" name="author" value="<%= book.author %>" hidden>
+                        <button type="button" class="icon-button edit-button" aria-label="Edit author"
+                            title="Edit author">&#9998;</button>
+                    </div>
+
+                    <div class="detail-row" data-field="isbn">
+                        <label for="isbn">ISBN</label>
+                        <span class="detail-value">
+                            <%= book.isbn %>
+                        </span>
+                        <input id="isbn" name="isbn" value="<%= book.isbn %>" hidden>
+                        <button type="button" class="icon-button edit-button" aria-label="Edit ISBN"
+                            title="Edit ISBN">&#9998;</button>
+                    </div>
+
+                    <div class="detail-row" data-field="rating">
+                        <label for="rating">Rating</label>
+                        <span class="detail-value">
+                            <%= book.rating %> / 10
+                        </span>
+                        <input id="rating" name="rating" type="number" min="1" max="10" value="<%= book.rating %>"
+                            hidden>
+                        <button type="button" class="icon-button edit-button" aria-label="Edit rating"
+                            title="Edit rating">&#9998;</button>
+                    </div>
+
+                    <div class="detail-row" data-field="date_read">
+                        <label for="date-read">Date read</label>
+                        <span class="detail-value">
+                            <%= new Intl.DateTimeFormat('en-US', { month: 'long' , day: 'numeric' , year: 'numeric' ,
+                                timeZone: 'UTC' }).format(new Date(`${book.date_read}T00:00:00Z`)) %>
+                        </span>
+                        <input id="date-read" name="date_read" type="date" value="<%= book.date_read %>" hidden>
+                        <button type="button" class="icon-button edit-button" aria-label="Edit date read"
+                            title="Edit date read">&#9998;</button>
+                    </div>
+
+                    <div class="detail-row" data-field="review">
+                        <label for="review">Review</label>
+                        <span class="detail-value">
+                            <%= book.review %>
+                        </span>
+                        <textarea id="review" name="review" hidden><%= book.review %></textarea>
+                        <button type="button" class="icon-button edit-button" aria-label="Edit review"
+                            title="Edit review">&#9998;</button>
+                    </div>
+
+                    <div class="detail-actions">
+                        <button type="submit" class="primary-button update-button">Update book</button>
+                    </div>
+                </div>
+            </form>
+            <form action="/books/<%= book.id %>/delete" method="post" class="detail-actions delete-form">
+                <button type="submit" class="danger-button" title="Delete book">
+                    <span aria-hidden="true">&#128465;</span> Delete book
+                </button>
+            </form>
+        </main>
+        <%- include('partials/footer') %>
+
+            <script>
+                document.querySelectorAll('.edit-button').forEach((button) => {
+                    button.addEventListener('click', () => {
+                        const row = button.closest('.detail-row');
+                        const value = row.querySelector('.detail-value');
+                        const input = row.querySelector('input, textarea');
+                        const editing = !input.hidden;
+
+                        if (editing) {
+                            value.textContent = row.dataset.field === 'date_read'
+                                ? new Intl.DateTimeFormat('en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                    timeZone: 'UTC',
+                                }).format(new Date(`${input.value}T00:00:00Z`))
+                                : input.value;
+                            input.hidden = true;
+                            value.hidden = false;
+                            button.textContent = '\u270e';
+                            button.setAttribute('aria-label', `Edit ${row.dataset.field}`);
+                            button.title = `Edit ${row.dataset.field}`;
+                            row.querySelector('.cancel-button')?.remove();
+                            return;
+                        }
+
+                        input.hidden = false;
+                        value.hidden = true;
+                        input.focus();
+                        button.textContent = '\u2713';
+                        button.setAttribute('aria-label', `Save ${row.dataset.field}`);
+                        button.title = `Save ${row.dataset.field}`;
+
+                        const cancelButton = document.createElement('button');
+                        cancelButton.type = 'button';
+                        cancelButton.className = 'icon-button cancel-button';
+                        cancelButton.textContent = '\u00d7';
+                        cancelButton.setAttribute('aria-label', `Cancel editing ${row.dataset.field}`);
+                        cancelButton.title = `Cancel editing ${row.dataset.field}`;
+                        cancelButton.addEventListener('click', () => {
+                            input.value = input.dataset.originalValue;
+                            input.hidden = true;
+                            value.hidden = false;
+                            button.textContent = '\u270e';
+                            button.setAttribute('aria-label', `Edit ${row.dataset.field}`);
+                            button.title = `Edit ${row.dataset.field}`;
+                            cancelButton.remove();
+                        });
+                        input.dataset.originalValue = input.value;
+                        row.append(cancelButton);
+                    });
+                });
+
+                document.querySelector('.delete-form').addEventListener('submit', (event) => {
+                    if (!window.confirm('Delete this book permanently?')) {
+                        event.preventDefault();
+                    }
+                });
+            </script>
+
+</body>
+
+</html>
